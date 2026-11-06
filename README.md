@@ -282,7 +282,8 @@ the first three buttons for the fire buttons.
 **Mouse.** A software mouse, off by default: enable it in `F6`, Hardware, or
 with `mouse on`. It is a ByteBox device on ports `&FC00` to `&FC02`, not a copy
 of a hardware adapter, see [Mouse interface](#mouse-interface). Click in the
-window to capture the mouse, middle click to release it.
+window to capture the mouse, middle click to release it; buttons held at that
+moment are released on the CPC side (2.3).
 
 **Real-time clock.** The DS12885 of the Symbiface II (ports `&FD14` and `&FD15`)
 reports the local time of the host.
@@ -839,14 +840,19 @@ component uses:
 
 | Port | Register | Behaviour |
 |---|---|---|
-| `&FC00` | Delta X | Signed byte, cleared by the read |
-| `&FC01` | Delta Y | Signed byte, cleared by the read |
+| `&FC00` | Delta X | Signed byte, consumed by the read. Motion beyond -128..127 is kept for the following reads (2.3) |
+| `&FC01` | Delta Y | Same as `&FC00` |
 | `&FC02` | Buttons | Bit 0 left, bit 1 right. Not cleared by the read |
 
-While the mouse is disabled, or not captured, the ports read `&FF`. Enable it
-with `mouse on`, then click in the window to capture the host mouse. The middle
-button releases it and never reaches the CPC. The real CPC has no mouse: a
-program that needs one should keep a joystick or keyboard fallback.
+While the mouse is disabled, the three ports read `&FF`. Test `&FC02` to detect
+it: an enabled mouse never reads `&FF` there, while a program that took `&FF`
+for a delta would see a move of -1 on every read. Enabled but not captured, the
+ports read 0. Enable it with `mouse on`, then click in the window to capture
+the host mouse. The middle button releases it and never reaches the CPC.
+Releasing the capture, by middle click, focus loss or an open panel, also
+releases the buttons and drops pending motion on the CPC side (2.3). The real
+CPC has no mouse: a program that needs one should keep a joystick or keyboard
+fallback.
 
 `src/mouse-driver.asm` reads the ports and accumulates the position;
 `src/mouse-demo.asm` uses it to move a block, and a right click clears the screen:

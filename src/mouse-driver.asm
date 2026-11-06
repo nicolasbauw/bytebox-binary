@@ -3,11 +3,15 @@
 ; The mouse is a ByteBox device, not a copy of a hardware adapter. It sits on
 ; three ports of the #FC00 page:
 ;
-;   #FC00  delta X   signed byte, cleared by the read
-;   #FC01  delta Y   signed byte, cleared by the read
+;   #FC00  delta X   signed byte, consumed by the read (motion beyond
+;                    -128..127 is kept for the following reads)
+;   #FC01  delta Y   same as #FC00
 ;   #FC02  buttons   bit 0 = left, bit 1 = right
 ;
-; While the mouse is disabled the ports read as #FF. Enable it in the
+; While the mouse is disabled the ports read as #FF; enabled but not captured,
+; they read 0. #FC02 never reads #FF while the mouse is enabled, which is how
+; mouse_update tells the two apart: read as a delta, #FF would be a move of -1
+; on every call. Enable it in the
 ; settings window (F6, Hardware), with the console command "mouse on", or
 ; with [mouse] enabled = true in config.toml; then click in the window to
 ; capture it (middle click releases).
@@ -27,8 +31,8 @@ mouse_y       defw 0
 mouse_buttons defb 0
 
 ; Read the three ports and update mouse_x, mouse_y and mouse_buttons.
-; While the mouse is disabled (or not captured) every port reads #FF: nothing
-; moves and the buttons are reported as released.
+; While the mouse is disabled every port reads #FF: nothing moves and the
+; buttons are reported as released. Changes A, BC, DE, HL and the flags.
 mouse_update
         ld   bc,MOUSE_PORT_BUTTONS
         in   a,(c)
