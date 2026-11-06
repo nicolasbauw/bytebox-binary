@@ -123,6 +123,11 @@ answer `y`.
 | `~/.bytebox/ROM/FUZIX0.ROM` to `FUZIX3.ROM` | Kernel, in four 16 KB ROM slices (slots 1 to 4) |
 | `~/.bytebox/FZX/disk.img` | 64 MB disk image |
 
+## Source
+
 FUZIX is free software, licensed under the GNU GPL v2 (see the
-[FUZIX project](https://github.com/EtchedPixels/FUZIX)). The files above are
-not Amstrad ROMs.
+[FUZIX project](https://github.com/EtchedPixels/FUZIX)). The kernel in the ROM
+slices is built from
+[FUZIX-patched-cpc-msx2](https://github.com/nicolasbauw/FUZIX-patched-cpc-msx2),
+a fork of FUZIX: the branch `cpc-local` holds the CPC 6128 port with the
+changes made for ByteBox. The files above are not Amstrad ROMs.
