@@ -26,11 +26,11 @@ the binary releases, the user manual and a developer corner with examples.
 - Expansions: X-MASS / Symbiface II IDE hard disk and DS12885 clock, RAM
   expansion up to 3.5 MB, software mouse, datacorder with audio, joystick and
   game controller, drive B.
-- Debugging tools in the window: Z80 monitor with breakpoints, read and write
-  watchpoints, I/O breakpoints, instruction trace, single step by instruction
-  or by video line, and a machine status window.
+- Debugging tools in the window: Z80 monitor with breakpoints, write
+  watchpoints, read watchpoints and I/O breakpoints (2.3), instruction trace,
+  single step by instruction or by video line, and a machine status window.
 - French (AZERTY) or English (QWERTY) machine: ROMs, virtual keyboard and PC
-  keyboard follow the chosen language.
+  keyboard follow the chosen language. *(Coming in version 2.3.)*
 - CRT shader (phosphor mask, scanlines), virtual keyboard, drag and drop of
   `.dsk`, `.cdt` and `.sna` files.
 - Snapshots (`.SNA`) readable by other emulators, which makes ByteBox a quick
@@ -122,9 +122,9 @@ error. It stops at the end of the script (exit status 1 on a script error), on
 an SSM `0000` pause, on a breakpoint or after `--frames`. One of `--script` or
 `--frames` is required.
 
-`--turbo` and the `turbo` console command remove the 50 Hz pacing. Turbo is
-suspended while a key is held down, so that the CPC sees the real duration of
-a key press and does not start repeating it.
+`--turbo` and the `turbo` console command (version 2.3) remove the 50 Hz
+pacing. Turbo is suspended while a key is held down, so that the CPC sees the
+real duration of a key press and does not start repeating it.
 
 ## Function keys
 
@@ -149,8 +149,8 @@ window, so starting from a desktop icon is the same as starting from a terminal.
 The window applies changes at once, except where noted. `Save configuration`
 writes the current values to `config.toml`.
 
-**Hardware.** Model, ROM sources, drive B, mouse, Symbiface II clock, language,
-diagnostics ROM, FUZIX ROM and extra RAM banks. Settings in the last group
+**Hardware.** Model, ROM sources, drive B, mouse, Symbiface II clock, language
+(2.3), diagnostics ROM, FUZIX ROM and extra RAM banks. Settings in the last group
 apply at the next power cycle.
 
 ![Hardware](assets/settings-hardware.png)
@@ -190,13 +190,16 @@ keyboard.
 
 ![Help](assets/settings-help.png)
 
-**About.** Version of the build: the tag for an official release, the last 7
+**About** (2.3). Version of the build: the tag for an official release, the last 7
 characters of the commit hash for a development build. The window title shows
 the same identifier.
 
 ![About](assets/settings-about.png)
 
 ## Language and keyboard
+
+> Coming in version 2.3. Release 2.2.0 is French only, and its virtual keyboard
+> is a photograph of the French keyboard.
 
 The machine is French (AZERTY ROMs) or English (QWERTY ROMs). Choose it in
 `F6`, Hardware, Language. The choice is saved to `config.toml` and applies at
@@ -253,9 +256,9 @@ Log in as `root`, without a password. Next time the page offers `Start FUZIX`.
 
 ![FUZIX shell](assets/fuzix-shell.png)
 
-The FUZIX keyboard follows the language of the machine: the kernel takes the key
-translation tables of the OS ROM that is installed. With the English ROMs the
-keys type what is printed on them, as in BASIC.
+From version 2.3, the FUZIX keyboard follows the language of the machine: the
+kernel takes the key translation tables of the OS ROM that is installed. With
+the English ROMs the keys type what is printed on them, as in BASIC.
 
 The FUZIX files are not Amstrad ROMs. More details, including how to start
 FUZIX by hand, are in [doc/fuzix.md](doc/fuzix.md).
@@ -322,10 +325,10 @@ snapload f.sna      Load a .SNA snapshot and resume
 pc                  Power cycle
 vol [n]             Show or set the output volume (percent)
 tapevol n           Tape signal level in the mix (percent)
-turbo [on|off]      No 50 Hz pacing, sound muted
+turbo [on|off]      No 50 Hz pacing, sound muted (2.3)
 driveb on|off       Enable or disable drive B
 ram n               Extra RAM banks (at the next power cycle)
-lang fr|en          Language (at the next power cycle)
+lang fr|en          Language (at the next power cycle) (2.3)
 diag on|off         Diagnostics ROM in slot 0F (at the next power cycle)
 fuzixrom on|off     FUZIX ROMs in slots 1-4 (at the next power cycle)
 ide x.img           Insert a hard disk image, enable the IDE interface
@@ -350,9 +353,9 @@ j 0x0000            Jump
 b [addr]            List or set breakpoints
 f addr              Delete a breakpoint
 w [addr]            List or set write watchpoints (fw deletes)
-rw [addr]           List or set read watchpoints (frw deletes)
+rw [addr]           List or set read watchpoints (frw deletes) (2.3)
 io [hh]             Break on IN or OUT to a port whose high byte is hh
-                    (7F Gate Array, BC-BF CRTC, F4-F7 PPI; fio deletes)
+                    (7F Gate Array, BC-BF CRTC, F4-F7 PPI; fio deletes) (2.3)
 p                   Pause
 g                   Resume
 hw                  Gate Array and CRTC status
@@ -687,8 +690,8 @@ status window (`F12`).
 ```text
 b 0x4010            break at an address
 w 0x8000            break when the program writes to 0x8000
-rw 0x8000           break when it reads 0x8000
-io 0x7f             break on any access to the Gate Array
+rw 0x8000           break when it reads 0x8000 (2.3)
+io 0x7f             break on any access to the Gate Array (2.3)
 g                   resume
 n                   step one instruction
 l                   step one video line

@@ -16,8 +16,8 @@ the Amstrad CPC 6128. The CPC 6128 port of FUZIX is by Antonio J. Casado Alias.
   (`hda1` to `hda4`). The root file system is on `hda1`.
 - The Symbiface II real-time clock: FUZIX reads it at boot and does not ask for
   the date and time.
-- The keyboard of FUZIX follows the language of the machine, see
-  [Keyboard](#keyboard).
+- From version 2.3, the keyboard of FUZIX follows the language of the machine,
+  see [Keyboard](#keyboard).
 
 ## Install and start
 
@@ -79,6 +79,8 @@ offers the same settings: `fuzixrom on`, `ram 56`, `ide ~/.bytebox/FZX/disk.img`
 `rtc on`, then `pc` to power cycle.
 
 ## Keyboard
+
+This applies from version 2.3. With release 2.2.0 the keyboard of FUZIX is AZERTY.
 
 At start, the ROM loader asks the OS ROM that is installed for the translation
 of each key, with and without `SHIFT`, and passes it to the kernel. The keys
