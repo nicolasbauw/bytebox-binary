@@ -50,7 +50,19 @@ chmod +x bytebox-*-x86_64.AppImage
 
 **Windows:** run `bytebox-*-x86_64.msi`.
 
-**macOS (Apple silicon):** extract `bytebox-*-macos-arm64.tar.gz`. It contains
+**macOS (Homebrew):**
+
+```sh
+brew tap nicolasbauw/bytebox
+brew install bytebox
+```
+
+Homebrew may ask you to trust the tap the first time; it prints the command to
+run. The formula installs the executable and `ByteBox.app`; the notes printed at
+the end of the installation give the command that links the application into
+`/Applications`.
+
+**macOS (Apple silicon), by hand:** extract `bytebox-*-macos-arm64.tar.gz`. It contains
 the `bytebox` executable and `ByteBox.app`. The application is signed ad hoc
 and not notarized. If macOS blocks it after download, remove the quarantine
 attribute:
@@ -243,7 +255,8 @@ The FUZIX keyboard follows the language of the machine: the kernel takes the key
 translation tables of the OS ROM that is installed. With the English ROMs the
 keys type what is printed on them, as in BASIC.
 
-The FUZIX files are not Amstrad ROMs.
+The FUZIX files are not Amstrad ROMs. More details, including how to start
+FUZIX by hand, are in [doc/fuzix.md](doc/fuzix.md).
 
 ## Hardware details
 
