@@ -1,0 +1,18 @@
+; Insert a disk image in drive A, list its catalogue, save a screenshot.
+;
+;   bytebox --headless --script=tools/csl/disk-cat.csl
+;
+; The disk is looked up next to the script, unless disk_dir says otherwise.
+; Change game.dsk to the image to test; replace CAT by RUN"NAME to start a
+; program instead.
+csl_version 1.1
+reset
+wait 3000000
+disk_dir "."
+disk_insert 'game.dsk'
+key_delay 70000 70000 400000    ; press, gap, gap after RETURN (microseconds)
+key_output 'CAT\(RET)'
+wait 3000000
+screenshot_dir "."
+screenshot_name "disk-cat"
+screenshot

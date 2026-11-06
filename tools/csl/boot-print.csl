@@ -1,0 +1,17 @@
+; Boot BASIC, type a line, save a screenshot.
+;
+;   bytebox --headless --script=tools/csl/boot-print.csl
+;
+; Times are in emulated microseconds. The screenshot goes to screenshot_dir
+; (here the current directory) as boot-print.png. A script that does not set
+; screenshot_dir uses --screenshot-dir, or the current directory.
+csl_version 1.1
+reset
+wait 3000000                    ; the BASIC banner takes about 2 seconds
+key_delay 70000 70000 400000    ; key down, gap, extra gap after RETURN (us);
+                                ; the default is too fast for a doubled letter
+key_output 'PRINT "HELLO"\(RET)'
+wait 1000000
+screenshot_dir "."
+screenshot_name "boot-print"
+screenshot

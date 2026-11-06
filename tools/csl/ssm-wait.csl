@@ -1,0 +1,12 @@
+; Wait for a program to ask for a pause with SSM code #0000, then save a
+; screenshot. Run it on a snapshot that issues the request (src/ssm-shot.asm):
+;
+;   bytebox --headless --snapshot=ssm-shot.sna --ssm --script=tools/csl/ssm-wait.csl
+;
+; wait_ssm <code> waits for that SSM code; wait_ssm0000 is the shorthand for
+; #0000. Without --ssm the requests are ignored and the wait would time out.
+csl_version 1.1
+screenshot_dir "."
+wait_ssm0000
+screenshot_name "after-ssm"
+screenshot
