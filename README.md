@@ -98,6 +98,7 @@ operations.
 
 | Option | Effect |
 |---|---|
+| `--help`, `-h` / `--version`, `-V` | Print the options (with examples) / the version of the build (2.3) |
 | `--diag` | Load the diagnostics ROM in slot 0F |
 | `--disk=<file>`, `-d` | Insert a disk image in drive A. A bare file name is looked up in `[file] dsk_path` |
 | `--tape=<file>`, `-t` | Insert a tape image |
@@ -109,6 +110,8 @@ operations.
 | `--frames=<N>` | Quit after N emulated frames (2.3) |
 | `--turbo` | No 50 Hz pacing, sound muted (2.3) |
 | `--headless` | No window, no sound, no pacing (2.3) |
+| `--debug` | Windowless debugging session: monitor commands, run until a breakpoint, symbols (2.3). See [Headless debugging session](#headless-debugging-session) |
+| `--sym=<file>`, `--commands=<file>`, `-e <command>`, `--json` | Symbols, commands and output format of `--debug` (2.3) |
 
 ```sh
 bytebox --disk=Barbarian.dsk --autocmd='RUN"BARBA.I'
@@ -681,6 +684,79 @@ bytebox --headless --snapshot=ssm-shot.sna --ssm --script=tools/csl/ssm-wait.csl
 In headless mode the exit status is 0 when the script completes, 1 on a script
 error and 2 when nothing tells the run when to stop. A test bench can compare the
 screenshots with references; this is how SHAKER is run.
+
+## Automating ByteBox
+
+> Coming in version 2.3.
+
+Everything needed to run ByteBox from a script, a continuous integration job or
+an AI assistant that only has a terminal is already described above. Together:
+
+1. Build the program: `tools/rasm-sna.sh` or `tools/c-sna.sh` produce a snapshot
+   and a `.sym` symbol file.
+2. Run it without a window: `tools/shot.sh prog.sna out.png` for a quick look, or
+   `bytebox --headless --snapshot=prog.sna --script=test.csl` to type, wait and
+   take several screenshots. About 20 times faster than real time.
+3. Look at the result: the PNG files are the output. The log goes to standard
+   error and the exit status tells whether the script completed (0), failed (1)
+   or had nothing to stop it (2).
+4. Synchronise with the program: a program that issues an SSM request (see
+   [SSM screenshots](#ssm-screenshots)) can ask for a screenshot at the right
+   moment, or pause the run with `0000`, so the script does not depend on guessed
+   delays.
+5. Inspect memory and registers: the CSL `snapshot` instruction writes a `.SNA`
+   file: a header with the registers and hardware state, followed by the 128 KB of
+   standard RAM. Any hex dump tool reads it. A program can also ask for a
+   snapshot with an SSM request.
+
+The monitor is reachable too, through `--debug` (next section).
+
+## Headless debugging session
+
+> Coming in version 2.3.
+
+`--debug` runs the machine without a window and reads monitor commands from
+`-e` (repeatable), from `--commands <file>` (one per line) or from standard
+input. Each command is echoed with `> `, followed by its output.
+
+```sh
+tools/rasm-sna.sh src/irq-border.asm irq-border.sna     # also writes irq-border.sym
+bytebox --debug --snapshot=irq-border.sna --sym=irq-border.sym \
+    -e "until 0x0038" -e "r" -e "d" -e "screen out.png"
+```
+
+It takes all the [monitor commands](#monitor) and adds the ones a windowless
+machine needs, because nothing else makes it advance:
+
+```text
+run [n]             Run n video frames (1), stopping early on a breakpoint
+g [n]               Run until a breakpoint or watchpoint (3000 frames at most)
+until addr [n]      Run until PC = addr
+frame n             Run until frame n
+n [count]           Execute count instructions
+over                Execute one instruction, a CALL or RST up to its return
+d [addr] [count]    Disassemble (20 instructions from PC)
+b addr A=05 HL=0xc000 (0x4000)=0x0a count 3
+                    Conditional breakpoint: every condition must hold, from
+                    the 3rd time on
+type text           Type text on the keyboard (\n is RETURN)
+screen f.png        Save the current image as PNG
+sym f               Load assembler symbols (RASM -s, sjasmplus, pasmo, SDCC)
+trace addr "x={(&a000)} hl={HL} f={frame}"
+                    Note a line each time PC reaches addr, without stopping
+```
+
+Symbols are accepted wherever an address is expected (`until main`,
+`d draw+4`) and shown in the disassembly and the registers. Addresses can also be
+written `&4000`, `$4000` or `4000h`. `help` lists everything. `--disk` and
+`--tape` insert media, as usual.
+
+With `--json`, each command prints one JSON line: the command, whether it
+succeeded, its text output, the emulator messages, the tracepoint lines, why the
+run stopped (`breakpoint`, `limit` or `done`) and the Z80 registers. `json regs`,
+`json mem addr [len]`, `json hw` and `json sym` return the registers, memory,
+hardware state (Gate Array, CRTC, PSG, keyboard) and symbols as JSON. This is the
+mode for a script or an AI assistant: every answer can be parsed.
 
 ## Debugging a program
 
