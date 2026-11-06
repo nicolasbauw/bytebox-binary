@@ -757,6 +757,7 @@ run stopped (`breakpoint`, `limit` or `done`) and the Z80 registers. `json regs`
 `json mem addr [len]`, `json hw` and `json sym` return the registers, memory,
 hardware state (Gate Array, CRTC, PSG, keyboard) and symbols as JSON. This is the
 mode for a script or an AI assistant: every answer can be parsed.
+`tools/debug_driver.py` is a Python example of such a session.
 
 ## Debugging a program
 
@@ -862,6 +863,7 @@ tools/rasm-sna.sh src/mouse-demo.asm && tools/run.sh mouse-demo.sna
 | `tools/c-sna.sh <prog.c> [out.sna]` | Compile with SDCC and wrap into a snapshot |
 | `tools/run.sh <snapshot>` | `bytebox --snapshot=<snapshot>`. `$BYTEBOX` overrides the executable |
 | `tools/shot.sh <snapshot> <out.png> [us]` | Headless run, screenshot after `us` emulated microseconds (default 2 s). Needs 2.3 |
+| `tools/debug_driver.py --snapshot <f.sna> --sym <f.sym> --label <name>` | Python driver for a `--debug --json` session: stops on a label several times, reads registers and memory, checks an expectation (exit status 0 or 1). `$BYTEBOX` overrides the executable. Needs 2.3 |
 
 ## License
 
