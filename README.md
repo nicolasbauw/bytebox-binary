@@ -17,10 +17,10 @@ the binary releases, the user manual and a developer corner with examples.
   nothing to install before the first launch.
 - CRTC type 0 and Gate Array timing checked against test programs. ByteBox
   runs SHAKER (Longshot's CRTC and Gate Array suite) and Kevin Thacker's Acid
-  tests, see [Conformance](#conformance).
+  tests, see [Conformance](#conformance). *(Version 2.3.)*
 - Automation compatible with Amspirit: CSL scripts and SSM screenshot
   requests. A headless mode runs them without a window, for test benches and
-  continuous integration.
+  continuous integration. *(Coming in version 2.3.)*
 - FUZIX, a small UNIX, runs on the 6128 with a hard disk, a real-time clock and
   up to 3.5 MB of extra RAM. One click installs and starts it.
 - Expansions: X-MASS / Symbiface II IDE hard disk and DS12885 clock, RAM
@@ -103,17 +103,19 @@ operations.
 | `--tape=<file>`, `-t` | Insert a tape image |
 | `--autocmd=<text>`, `-a` | Type a command once BASIC is ready |
 | `--snapshot=<file>`, `-s` | Resume from a `.SNA` snapshot instead of booting |
-| `--script=<file>` | Run a CSL script |
-| `--ssm` | Act on SSM requests |
-| `--screenshot-dir=<dir>` | Where script and SSM screenshots go (default: current directory) |
-| `--frames=<N>` | Quit after N emulated frames |
-| `--turbo` | No 50 Hz pacing, sound muted |
-| `--headless` | No window, no sound, no pacing |
+| `--script=<file>` | Run a CSL script (2.3) |
+| `--ssm` | Act on SSM requests (2.3) |
+| `--screenshot-dir=<dir>` | Where script and SSM screenshots go (default: current directory) (2.3) |
+| `--frames=<N>` | Quit after N emulated frames (2.3) |
+| `--turbo` | No 50 Hz pacing, sound muted (2.3) |
+| `--headless` | No window, no sound, no pacing (2.3) |
 
 ```sh
 bytebox --disk=Barbarian.dsk --autocmd='RUN"BARBA.I'
 bytebox --snapshot=demo.sna
 ```
+
+Options marked (2.3) are not in release 2.2.0. They come with version 2.3.
 
 `--headless` runs about 20 times faster than real time and logs to standard
 error. It stops at the end of the script (exit status 1 on a script error), on
@@ -443,7 +445,8 @@ reported in the log and the built-in ROM is used.
 ## Conformance
 
 ByteBox models the timing of the CRTC type 0 and of the Gate Array. Two test
-suites are used as references.
+suites are used as references. The runs and the figures below are those of the
+development version of 2.3; they need the automation features of that version.
 
 - **SHAKER** by Longshot (Logon System) exercises the CRTC and the Gate Array.
   Each test screen is compared with the references published on Shakerland:
@@ -465,20 +468,24 @@ This part is for programming the CPC and for testing programs with ByteBox. The
 examples are in `src` (Z80 and C sources) and `tools` (scripts). They were
 assembled or compiled and run in ByteBox.
 
+SSM requests, CSL scripts and the headless mode (`--ssm`, `--script`,
+`--headless`) are not in release 2.2.0: they come with version 2.3. The sections
+and the files that use them say so.
+
 | File | Purpose |
 |---|---|
 | `src/border.asm` | Smallest program: set the border colour |
 | `src/screen.asm` | Write to video memory (mode 1, four pens) |
 | `src/irq-border.asm` | Interrupt handler that changes the border colour |
-| `src/ssm-shot.asm` | Request screenshots from inside the program (SSM) |
+| `src/ssm-shot.asm` | Request screenshots from inside the program (SSM, 2.3) |
 | `src/mouse-driver.asm` | Driver for the ByteBox software mouse |
 | `src/mouse-demo.asm` | Move a block with the mouse |
 | `src/c/crt0.s`, `src/c/bars.c` | C program built with SDCC |
 | `tools/rasm-sna.sh` | Assemble a source into a snapshot |
 | `tools/c-sna.sh` | Compile a C program into a snapshot |
 | `tools/run.sh` | Resume a snapshot in the window |
-| `tools/shot.sh` | Resume a snapshot without a window and save a screenshot |
-| `tools/csl/*.csl` | CSL script examples |
+| `tools/shot.sh` | Resume a snapshot without a window and save a screenshot (2.3) |
+| `tools/csl/*.csl` | CSL script examples (2.3) |
 
 ## Snapshots and RASM
 
@@ -565,6 +572,8 @@ Run it, open `F12`, and set `b 0x0038` in the quick bar to stop at each interrup
 
 ## SSM screenshots
 
+> Coming in version 2.3. Release 2.2.0 ignores SSM requests.
+
 SSM (ScreenShot Management) lets a program ask the emulator for a screenshot at
 an exact cycle. The request is a pair of `ED` opcodes that do nothing on a real
 Z80: `ED LL ED HH` asks for the capture numbered `HHLL`. With `--ssm`, ByteBox
@@ -603,6 +612,8 @@ a screenshot taken before the first frame is drawn is black, and
 the requests are ignored, except that they release a `wait_ssm` of a script.
 
 ## CSL scripts
+
+> Coming in version 2.3. Release 2.2.0 has no `--script` option.
 
 CSL (CPC Scripting Language) is a text format, one instruction per line, that
 plays the user: reset, disk insertion, typing, waits in emulated microseconds,
@@ -771,7 +782,7 @@ tools/rasm-sna.sh src/mouse-demo.asm && tools/run.sh mouse-demo.sna
 | `tools/rasm-sna.sh <src.asm> [out.sna]` | Assemble with RASM into a version 2 snapshot and a `.sym` file. `$RASM` overrides the executable |
 | `tools/c-sna.sh <prog.c> [out.sna]` | Compile with SDCC and wrap into a snapshot |
 | `tools/run.sh <snapshot>` | `bytebox --snapshot=<snapshot>`. `$BYTEBOX` overrides the executable |
-| `tools/shot.sh <snapshot> <out.png> [us]` | Headless run, screenshot after `us` emulated microseconds (default 2 s) |
+| `tools/shot.sh <snapshot> <out.png> [us]` | Headless run, screenshot after `us` emulated microseconds (default 2 s). Needs 2.3 |
 
 ## License
 
