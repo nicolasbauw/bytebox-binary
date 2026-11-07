@@ -112,6 +112,7 @@ operations.
 | `--ssm` | Act on SSM requests (2.3) |
 | `--screenshot-dir=<dir>` | Where script and SSM screenshots go (default: current directory) (2.3) |
 | `--frames=<N>` | Quit after N emulated frames (2.3) |
+| `--audio-dump=<file>` | With `--headless`: save the sound as a WAV file (16-bit mono, 44.1 kHz) (2.3) |
 | `--turbo` | No 50 Hz pacing, sound muted (2.3) |
 | `--headless` | No window, no sound, no pacing (2.3) |
 | `--debug` | Windowless debugging session: monitor commands, run until a breakpoint, symbols (2.3). See [Headless debugging session](#headless-debugging-session) |
@@ -125,7 +126,7 @@ bytebox --snapshot=demo.sna
 Options marked (2.3) are not in release 2.2.0. They come with version 2.3.
 
 `--headless` runs about 20 times faster than real time and logs to standard
-error. It stops at the end of the script (exit status 1 on a script error), on
+error. It plays no sound, but `--audio-dump` keeps it in a WAV file. It stops at the end of the script (exit status 1 on a script error), on
 an SSM `0000` pause, on a breakpoint or after `--frames`. One of `--script` or
 `--frames` is required.
 
