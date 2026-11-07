@@ -102,7 +102,7 @@ operations.
 | `--diag` | Load the diagnostics ROM in slot 0F |
 | `--disk=<file>`, `-d` | Insert a disk image in drive A. A bare file name is looked up in `[file] dsk_path` |
 | `--tape=<file>`, `-t` | Insert a tape image |
-| `--autocmd=<text>`, `-a` | Type a command once BASIC is ready |
+| `--autocmd=<text>`, `-a` | Type a command once BASIC is ready. Also with `--headless` and `--debug` (2.3) |
 | `--snapshot=<file>`, `-s` | Resume from a `.SNA` snapshot instead of booting |
 | `--script=<file>` | Run a CSL script (2.3) |
 | `--ssm` | Act on SSM requests (2.3) |
@@ -656,6 +656,11 @@ The typed characters follow the language of the machine: a script written for
 the French keyboard types the same text on the English one, because
 `key_output` sends characters, not key positions.
 
+The same key pressed twice in a row is always released for at least two
+keyboard scans (40 ms) in between, whatever `key_delay` says (2.3). With the
+standard one-frame gap, the firmware sometimes missed the release, and a doubled
+letter was typed once.
+
 Three examples are in `tools/csl`. The first boots BASIC, types a line and saves
 a screenshot:
 
@@ -663,7 +668,7 @@ a screenshot:
 csl_version 1.1
 reset
 wait 3000000                    ; the BASIC banner takes about 2 seconds
-key_delay 70000 70000 400000    ; the default is too fast for a doubled letter
+key_delay 70000 70000 400000    ; slower than the standard, like a human
 key_output 'PRINT "HELLO"\(RET)'
 wait 1000000
 screenshot_dir "."
@@ -750,7 +755,12 @@ trace addr "x={(&a000)} hl={HL} f={frame}"
 Symbols are accepted wherever an address is expected (`until main`,
 `d draw+4`) and shown in the disassembly and the registers. Addresses can also be
 written `&4000`, `$4000` or `4000h`. `help` lists everything. `--disk` and
-`--tape` insert media, as usual.
+`--tape` insert media, as usual, and `--autocmd` types its command during the
+first `run` commands, once BASIC is ready (2.3):
+
+```sh
+bytebox --debug --disk=game.dsk --autocmd='RUN"GAME' -e "run 1500" -e "screen s.png"
+```
 
 With `--json`, each command prints one JSON line: the command, whether it
 succeeded, its text output, the emulator messages, the tracepoint lines, why the
