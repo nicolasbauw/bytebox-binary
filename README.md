@@ -103,6 +103,8 @@ operations.
 | `--disk=<file>`, `-d` | Insert a disk image in drive A. A bare file name is looked up in `[file] dsk_path` |
 | `--tape=<file>`, `-t` | Insert a tape image |
 | `--autocmd=<text>`, `-a` | Type a command once BASIC is ready. Also with `--headless` and `--debug` (2.3) |
+| `--fuzix` | Start the installed FUZIX, like `Start FUZIX` in the settings window (2.3) |
+| `--fuzix-disk=<file>` | Same, with another disk image, for example a copy: FUZIX writes to its disk (2.3) |
 | `--snapshot=<file>`, `-s` | Resume from a `.SNA` snapshot instead of booting |
 | `--script=<file>` | Run a CSL script (2.3) |
 | `--ssm` | Act on SSM requests (2.3) |
@@ -125,9 +127,10 @@ error. It stops at the end of the script (exit status 1 on a script error), on
 an SSM `0000` pause, on a breakpoint or after `--frames`. One of `--script` or
 `--frames` is required.
 
-`--turbo` and the `turbo` console command (version 2.3) remove the 50 Hz
-pacing. Turbo is suspended while a key is held down, so that the CPC sees the
-real duration of a key press and does not start repeating it.
+`--turbo`, the `turbo` console command and the Turbo box of the settings window
+(`F6`, Hardware) remove the 50 Hz pacing (version 2.3). Turbo is suspended while
+a key is held down, so that the CPC sees the real duration of a key press and
+does not start repeating it.
 
 ## Function keys
 
@@ -152,9 +155,9 @@ window, so starting from a desktop icon is the same as starting from a terminal.
 The window applies changes at once, except where noted. `Save configuration`
 writes the current values to `config.toml`.
 
-**Hardware.** Model, ROM sources, drive B, mouse, Symbiface II clock, language
-(2.3), diagnostics ROM, FUZIX ROM and extra RAM banks. Settings in the last group
-apply at the next power cycle.
+**Hardware.** Model, drive B, mouse, Symbiface II clock, language (2.3),
+diagnostics ROM, FUZIX ROM, extra RAM banks, and turbo (2.3, not saved). The
+ROM slots and memory settings apply at the next power cycle.
 
 ![Hardware](assets/settings-hardware.png)
 
@@ -256,6 +259,15 @@ slices and the disk image (3.6 MB, 64 MB unpacked) into `~/.bytebox`, then:
 
 Log in as `root`, without a password. Next time the page offers `Start FUZIX`.
 `Save configuration` keeps the settings.
+
+From the command line, `--fuzix` does the same as `Start FUZIX` (2.3).
+`--fuzix-disk=<file>` starts it on another disk image: FUZIX writes to its disk,
+so a copy keeps automated runs repeatable.
+
+```sh
+cp ~/.bytebox/FZX/disk.img /tmp/fuzix.img
+bytebox --headless --fuzix-disk=/tmp/fuzix.img --script=session.csl
+```
 
 ![FUZIX shell](assets/fuzix-shell.png)
 
