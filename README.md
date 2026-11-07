@@ -606,16 +606,17 @@ Run it, open `F12`, and set `b 0x0038` in the quick bar to stop at each interrup
 
 > Coming in version 2.3. Release 2.2.0 ignores SSM requests.
 
-SSM (ScreenShot Management) lets a program ask the emulator for a screenshot at
-an exact cycle. The request is a pair of `ED` opcodes that do nothing on a real
+SSM (ScreenShot Management, [standard 1.2](https://shaker.logonsystem.eu/Shaker_CSL/SSM-STANDARD-EN.pdf) by
+Longshot) lets a program ask the emulator for a screenshot at an exact cycle. The request is a pair of `ED` opcodes that do nothing on a real
 Z80: `ED LL ED HH` asks for the capture numbered `HHLL`. With `--ssm`, ByteBox
 saves `BYTEBOX_0_HHLL.png`.
 
 | Code | Effect |
 |---|---|
-| `#0001` to `#FFFD` | Save `BYTEBOX_0_HHLL.png` |
-| `#FFFE` | Save a screenshot |
-| `#FFFF` | Save a snapshot |
+| `#0001` to `#FEFF` | Save `BYTEBOX_0_HHLL.png` |
+| `#FFFE` (`ED FE ED FF`) | Save a screenshot named by the CSL `screenshot_name`, or `BYTEBOX_0_FFFE.png` |
+| `#FFFF` (`ED FF ED FF`) | Save a snapshot named by the CSL `snapshot_name`, or `BYTEBOX_0_FFFF.sna` |
+| Other `#FFxx` | Reserved by the standard, ignored |
 | `#0000` | Pause the emulation (end of a headless run) |
 
 `src/ssm-shot.asm` defines a macro and takes two captures, with a different
@@ -647,9 +648,10 @@ the requests are ignored, except that they release a `wait_ssm` of a script.
 
 > Coming in version 2.3. Release 2.2.0 has no `--script` option.
 
-CSL (CPC Scripting Language) is a text format, one instruction per line, that
-plays the user: reset, disk insertion, typing, waits in emulated microseconds,
-screenshots. It is the format used by Amspirit and by SHAKER. Comments start
+CSL (CPC Scripting Language, [standard 1.5](https://shaker.logonsystem.eu/Shaker_CSL/CSL-STANDARD-EN.pdf) by
+Longshot) is a text format, one instruction per line, that plays the user:
+reset, disk insertion, typing, waits in emulated microseconds, screenshots. It is
+the format used by Amspirit and by SHAKER. Comments start
 with `;`. Run a script with `--script`:
 
 ```sh
@@ -657,25 +659,36 @@ bytebox --script=test.csl                 # in the window
 bytebox --headless --script=test.csl      # without a window
 ```
 
-Instructions supported:
+Instructions supported (all of CSL 1.5 except cartridge and Multiface 2 ROMs):
 
 | Instruction | Effect |
 |---|---|
-| `csl_version 1.1` | Version of the language |
-| `reset [soft]` | Hard reset (power cycle), or soft reset |
+| `csl_version 1.5` | Version of the language, quoted in error messages |
+| `reset [soft]` | Hard reset (power cycle), or soft reset: the firmware restarts as after CTRL+SHIFT+ESC, extended RAM, disks and tape are kept |
+| `crtc_select 0` | Only CRTC type 0 is emulated; another type stops the script |
+| `gate_array 40010`, `cpc_model 2`, `memory_exp 0` | The hardware ByteBox emulates (40010 Gate Array, CPC 6128, no memory expansion); another value stops the script with an error |
+| `rom_dir '<dir>'`, `rom_config L 0 '<file>'`, `rom_config U <n> '<file>'` | Lower ROM or upper ROM `n` from a file, from the next reset on, for this session only |
 | `wait <us>` | Run for that many emulated microseconds |
 | `disk_dir '<dir>'` | Directory of the disk images (default: next to the script) |
 | `disk_insert [A\|B] '<file>'` | Insert a disk image |
+| `tape_dir '<dir>'`, `tape_insert '<file>'` | Insert a `.cdt` tape, ready to play |
+| `tape_play`, `tape_stop`, `tape_rewind` | Tape deck keys |
+| `snapshot_dir '<dir>'`, `snapshot_load '<file>'` | Resume a `.sna` snapshot |
 | `key_delay <press> <gap> [<gap after RETURN>]` | Key timing in microseconds |
 | `key_output '<text>'` | Type text. `\(NAME)` is a special key: `RET`, `ESC`, `TAB`, `CAP`, `SHI`, `CTR`, `COP`, `CLR`, `DEL`, `ENT`, `ARU` `ARR` `ARD` `ARL` (arrows), `FN0` to `FN9`. `{...}` presses keys together, `\(KOF)` removes the delay before the next key |
+| `key_from_file '<file>'` | Type a text file, each line ending with RETURN |
 | `keyboard_write <r0>,...,<r9>` | Set the ten rows of the keyboard matrix |
 | `wait_ssm <code>`, `wait_ssm0000` | Wait for an SSM request |
-| `wait_vsyncoffon` | Wait for a vertical sync |
+| `wait_vsyncoffon` | Wait for the next start of a vertical sync |
+| `wait_driveonoff [<n>]` | Wait for the disk drive motor to start and stop, `n` times |
 | `screenshot_dir '<dir>'`, `screenshot_name '<name>'` | Where and how to name captures |
 | `screenshot [vsync]` | Save a screenshot |
-| `snapshot_name '<name>'`, `snapshot` | Save a snapshot |
+| `snapshot_name '<name>'`, `snapshot [vsync]` | Save a snapshot |
+| `snapshot_version 3` | ByteBox writes version 3 snapshots; another version stops the script |
 | `csl_load '<file>'` | Chain to another script |
-| `crtc_select 0` | Only CRTC type 0 is emulated; another type stops the script |
+
+An error stops the script and names the script, the line, the instruction, the
+reason, the CSL version declared by the script and the one ByteBox supports.
 
 A script is read as UTF-8, or as Latin-1 when it is not valid UTF-8 (scripts
 written on Windows), so accented letters such as `ù` are typed (2.3).
