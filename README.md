@@ -100,6 +100,8 @@ operations.
 |---|---|
 | `--help`, `-h` / `--version`, `-V` | Print the options (with examples) / the version of the build (2.3) |
 | `--diag` | Load the diagnostics ROM in slot 0F |
+| `--lang=fr\|en` | ROMs and keyboard for this session, not saved (2.3) |
+| `--config=<file>` | Use another configuration file, read and saved instead of `~/.config/bytebox/config.toml`. A partial file is completed with the defaults (2.3) |
 | `--disk=<file>`, `-d` | Insert a disk image in drive A. A bare file name is looked up in `[file] dsk_path` |
 | `--tape=<file>`, `-t` | Insert a tape image |
 | `--autocmd=<text>`, `-a` | Type a command once BASIC is ready. Also with `--headless` and `--debug` (2.3) |
@@ -663,6 +665,9 @@ Instructions supported:
 | `snapshot_name '<name>'`, `snapshot` | Save a snapshot |
 | `csl_load '<file>'` | Chain to another script |
 | `crtc_select 0` | Only CRTC type 0 is emulated; another type stops the script |
+
+A script is read as UTF-8, or as Latin-1 when it is not valid UTF-8 (scripts
+written on Windows), so accented letters such as `ù` are typed (2.3).
 
 The typed characters follow the language of the machine: a script written for
 the French keyboard types the same text on the English one, because
