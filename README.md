@@ -161,7 +161,8 @@ The window applies changes at once, except where noted. `Save configuration`
 writes the current values to `config.toml`.
 
 **Hardware.** Model, drive B, mouse, Symbiface II clock, language (2.3),
-diagnostics ROM, FUZIX ROM, extra RAM banks, and turbo (2.3, not saved). The
+diagnostics ROM, FUZIX ROM, memory expansion (2.3: a period card from a list),
+and turbo (2.3, not saved). The
 ROM slots and memory settings apply at the next power cycle.
 
 ![Hardware](assets/settings-hardware.png)
@@ -285,8 +286,12 @@ FUZIX by hand, are in [doc/fuzix.md](doc/fuzix.md).
 
 ## Hardware details
 
-**Extra RAM.** `ram 16` (or the slider in `F6`) adds 16 banks of 64 KB beyond
-the 128 KB of the 6128. The banks are numbered as on period expansions and in
+**Extra RAM.** In `F6`, Hardware page, the Memory expansion list offers the
+period cards, with the total RAM of the machine (2.3): 256 KB (`C4`-`DF`),
+Silicon Disc 256 KB (`E4`-`FF`), Dk'tronics 512 KB (`C4`-`FF`) and 4 MB. The
+console does the same with `ram dk256`, `ram silicon`, `ram dk512`, `ram mb4` or
+`ram none`, and `ram 16` still adds any number of banks of 64 KB beyond the
+128 KB of the 6128 (the list then shows "Custom"). The banks are numbered as on period expansions and in
 the diagnostic ROM: bits 5-3 of the RAM configuration value select banks 1 to 7
 on port `&7Fxx` (Dk'tronics 256 and 512 KB), 8 to 15 on `&7Exx`, and so on up to
 56 to 63 on `&78xx` (4 MB card); bank 0 is the second 64 KB of the 6128. The
@@ -352,7 +357,7 @@ vol [n]             Show or set the output volume (percent)
 tapevol n           Tape signal level in the mix (percent)
 turbo [on|off]      No 50 Hz pacing, sound muted (2.3)
 driveb on|off       Enable or disable drive B
-ram n               Extra RAM banks (at the next power cycle)
+ram <card>|n        Memory expansion (none, dk256, silicon, dk512, mb4; 2.3) or extra RAM banks (at the next power cycle)
 lang fr|en          Language (at the next power cycle) (2.3)
 diag on|off         Diagnostics ROM in slot 0F (at the next power cycle)
 fuzixrom on|off     FUZIX ROMs in slots 1-4 (at the next power cycle)
