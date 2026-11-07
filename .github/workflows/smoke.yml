@@ -1,0 +1,72 @@
+name: Smoke test
+
+# Runs the published Linux AppImage in a virtual display (Xvfb, software
+# rendering) and checks that it boots and draws: --autocmd types a BASIC
+# line that turns the whole screen bright red, and the screenshot of the
+# display must be mostly that red. Catches what the source tests cannot
+# see: packaging, statically linked SDL2, the AppImage itself.
+#
+# Uses only options that 2.2 already has (window mode, --autocmd), so it
+# works with every published release.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release to test (default: latest)"
+        required: false
+
+jobs:
+  appimage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Xvfb and software rendering
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb mesa-vulkan-drivers libgl1-mesa-dri libegl1 imagemagick
+
+      - name: Download the AppImage
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag || github.event.release.tag_name }}
+        run: |
+          gh release download $TAG -R "$GITHUB_REPOSITORY" -p '*.AppImage'
+          chmod +x *.AppImage
+          ls -l *.AppImage
+
+      - name: Boot, type a BASIC line, take a screenshot
+        env:
+          APPIMAGE_EXTRACT_AND_RUN: "1"
+          SDL_AUDIODRIVER: dummy
+        run: |
+          Xvfb :99 -screen 0 1280x1024x24 &
+          sleep 2
+          export DISPLAY=:99 HOME=$RUNNER_TEMP/home
+          mkdir -p "$HOME"
+          ./*.AppImage --autocmd='MODE 1:BORDER 6:INK 0,6' > bytebox.log 2>&1 &
+          pid=$!
+          sleep 30
+          import -window root screen.png
+          if ! kill -0 $pid 2>/dev/null; then
+            echo "::error::ByteBox exited early"
+            cat bytebox.log
+            exit 1
+          fi
+          kill $pid
+          tail -20 bytebox.log
+
+      - name: Check the screen is red
+        run: |
+          # Share of the 1280x1024 display that is bright red (CPC ink 6).
+          red=$(convert screen.png -fx 'r>0.75 && g<0.25 && b<0.25 ? 1 : 0' -format '%[fx:mean]' info:)
+          echo "red share: $red"
+          awk -v r="$red" 'BEGIN { exit !(r > 0.15) }' || { echo "::error::screen is not red ($red)"; exit 1; }
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: smoke-test
+          path: |
+            screen.png
+            bytebox.log
