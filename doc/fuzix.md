@@ -11,7 +11,7 @@ the Amstrad CPC 6128. The CPC 6128 port of FUZIX is by Antonio J. Casado Alias.
 - A shell with the usual utilities: `ls`, `cat`, `cp`, `ed`, `vi`, `more`, `ps`,
   `date`, `mount`, `fsck` and others.
 - The kernel uses 128 KB of RAM. 64 KB are available to processes, up to 48
-  processes. Swap lives in the extra RAM (56 groups of 64 KB, 3.5 MB).
+  processes. Swap lives in the 4 MB memory expansion (banks 08 to 3F, 3.5 MB).
 - A 64 MB disk on the X-MASS / Symbiface II IDE interface, with four partitions
   (`hda1` to `hda4`). The root file system is on `hda1`.
 - The Symbiface II real-time clock: FUZIX reads it at boot and does not ask for
@@ -28,7 +28,7 @@ Open the settings window (`F6`), FUZIX page, and click `Install and start FUZIX`
 ByteBox downloads four ROM slices and the disk image (3.6 MB, 64 MB once
 unpacked) into `~/.bytebox`, then:
 
-1. enables the FUZIX ROM in slots 1 to 4 and 56 extra RAM groups;
+1. enables the FUZIX ROM in slots 1 to 4 and the 4 MB memory expansion;
 2. inserts the disk image, which enables the IDE interface;
 3. turns the Symbiface II clock on;
 4. power cycles and types the command that starts FUZIX: `ùfuzix` with the
@@ -48,7 +48,7 @@ The same result without the page:
 ```toml
 # ~/.config/bytebox/config.toml
 [memory]
-extra_ram_banks = 56
+extra_ram_banks = 63
 
 [ide]
 enabled = true

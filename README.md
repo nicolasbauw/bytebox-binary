@@ -24,9 +24,9 @@ the binary releases, the user manual and a developer corner with examples.
   requests. A headless mode runs them without a window, for test benches and
   continuous integration. *(Coming in version 2.3.)*
 - FUZIX, a small UNIX, runs on the 6128 with a hard disk, a real-time clock and
-  up to 3.5 MB of extra RAM. One click installs and starts it.
+  a 4 MB memory expansion. One click installs and starts it.
 - Expansions: X-MASS / Symbiface II IDE hard disk and DS12885 clock, RAM
-  expansion up to 3.5 MB, software mouse, datacorder with audio, joystick and
+  expansion up to 4 MB, software mouse, datacorder with audio, joystick and
   game controller, drive B.
 - Debugging tools in the window: Z80 monitor with breakpoints, write
   watchpoints, read watchpoints and I/O breakpoints (2.3), instruction trace,
@@ -250,13 +250,13 @@ Symbiface II IDE interface (ports `&FD08` to `&FD0F`). `ide eject` removes it.
 
 [FUZIX](https://github.com/EtchedPixels/FUZIX) is a UNIX-like system by Alan
 Cox. ByteBox runs a build of FUZIX for the CPC 6128, with four ROM slices, a
-64 MB disk image on the IDE interface, the Symbiface II clock and the full
-56 groups of extra RAM that its swap uses.
+64 MB disk image on the IDE interface, the Symbiface II clock and the 4 MB
+memory expansion, whose banks 08 to 3F hold its swap.
 
 In `F6`, FUZIX page, click `Install and start FUZIX`. ByteBox downloads the ROM
 slices and the disk image (3.6 MB, 64 MB unpacked) into `~/.bytebox`, then:
 
-1. enables the FUZIX ROM in slots 1 to 4 and the 56 extra RAM groups;
+1. enables the FUZIX ROM in slots 1 to 4 and the 4 MB memory expansion;
 2. inserts the disk image, which enables the IDE interface;
 3. turns the Symbiface clock on, so that FUZIX does not ask for the date;
 4. power cycles and types the command that starts FUZIX (`ùfuzix` with the
@@ -286,8 +286,12 @@ FUZIX by hand, are in [doc/fuzix.md](doc/fuzix.md).
 ## Hardware details
 
 **Extra RAM.** `ram 16` (or the slider in `F6`) adds 16 banks of 64 KB beyond
-the 128 KB of the 6128, with the protocol of period third-party expansions. The
-maximum is 56 banks (3.5 MB). It applies at the next power cycle.
+the 128 KB of the 6128. The banks are numbered as on period expansions and in
+the diagnostic ROM: bits 5-3 of the RAM configuration value select banks 1 to 7
+on port `&7Fxx` (Dk'tronics 256 and 512 KB), 8 to 15 on `&7Exx`, and so on up to
+56 to 63 on `&78xx` (4 MB card); bank 0 is the second 64 KB of the 6128. The
+maximum is 63 banks, the 4 MB card. It applies at the next power cycle. With the
+FUZIX ROM on, the whole card is always installed (2.3).
 
 **Joystick.** The first controller found at startup drives the CPC joystick port:
 D-pad or left stick for directions, three buttons for fire 1, 2 and 3.
@@ -666,7 +670,8 @@ Instructions supported (all of CSL 1.5 except cartridge and Multiface 2 ROMs):
 | `csl_version 1.5` | Version of the language, quoted in error messages |
 | `reset [soft]` | Hard reset (power cycle), or soft reset: the firmware restarts as after CTRL+SHIFT+ESC, extended RAM, disks and tape are kept |
 | `crtc_select 0` | Only CRTC type 0 is emulated; another type stops the script |
-| `gate_array 40010`, `cpc_model 2`, `memory_exp 0` | The hardware ByteBox emulates (40010 Gate Array, CPC 6128, no memory expansion); another value stops the script with an error |
+| `gate_array 40010`, `cpc_model 2` | The hardware ByteBox emulates (40010 Gate Array, CPC 6128); another value stops the script with an error |
+| `memory_exp <0-4>` | Memory expansion from the next reset, for this session: 0 none, 1 256 KB (`C4`-`DF`), 2 Silicon Disc (`E4`-`FF`), 3 4 MB card, 4 Dk'tronics 512 KB (`C4`-`FF`) |
 | `rom_dir '<dir>'`, `rom_config L 0 '<file>'`, `rom_config U <n> '<file>'` | Lower ROM or upper ROM `n` from a file, from the next reset on, for this session only |
 | `wait <us>` | Run for that many emulated microseconds |
 | `disk_dir '<dir>'` | Directory of the disk images (default: next to the script) |
