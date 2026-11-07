@@ -20,7 +20,7 @@ the binary releases, the user manual and a developer corner with examples.
   and checked against test programs. ByteBox runs SHAKER (Longshot's CRTC and
   Gate Array suite) and Kevin Thacker's Acid
   tests, see [Conformance](#conformance). *(Version 2.3.)*
-- Automation compatible with Amspirit: CSL scripts and SSM screenshot
+- Automation compatible with SHAKER: CSL scripts and SSM screenshot
   requests. A headless mode runs them without a window, for test benches and
   continuous integration. *(Coming in version 2.3.)*
 - FUZIX, a small UNIX, runs on the 6128 with a hard disk, a real-time clock and
@@ -660,7 +660,7 @@ the requests are ignored, except that they release a `wait_ssm` of a script.
 CSL (CPC Scripting Language, [standard 1.5](https://shaker.logonsystem.eu/Shaker_CSL/CSL-STANDARD-EN.pdf) by
 Longshot) is a text format, one instruction per line, that plays the user:
 reset, disk insertion, typing, waits in emulated microseconds, screenshots. It is
-the format used by Amspirit and by SHAKER. Comments start
+the format used by SHAKER and by Amspirit. Comments start
 with `;`. Run a script with `--script`:
 
 ```sh
