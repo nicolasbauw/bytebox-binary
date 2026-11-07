@@ -15,8 +15,10 @@ the binary releases, the user manual and a developer corner with examples.
 - One native executable for Linux, Windows and macOS (Apple silicon), built on
   SDL2. The French and English system ROMs and AMSDOS are built in: there is
   nothing to install before the first launch.
-- CRTC type 0 and Gate Array timing checked against test programs. ByteBox
-  runs SHAKER (Longshot's CRTC and Gate Array suite) and Kevin Thacker's Acid
+- CRTC type 0 and Gate Array timing modelled on Longshot's
+  [Amstrad CPC CRTC Compendium](https://shaker.logonsystem.eu/ACCC1.11-EN.pdf)
+  and checked against test programs. ByteBox runs SHAKER (Longshot's CRTC and
+  Gate Array suite) and Kevin Thacker's Acid
   tests, see [Conformance](#conformance). *(Version 2.3.)*
 - Automation compatible with Amspirit: CSL scripts and SSM screenshot
   requests. A headless mode runs them without a window, for test benches and
@@ -470,11 +472,12 @@ ByteBox models the timing of the CRTC type 0 and of the Gate Array. Two test
 suites are used as references. The runs and the figures below are those of the
 development version of 2.3; they need the automation features of that version.
 
-- **SHAKER** by Longshot (Logon System) exercises the CRTC and the Gate Array.
+- **[SHAKER](https://shaker.logonsystem.eu/tests)** by Longshot (Logon System)
+  exercises the CRTC and the Gate Array.
   Each test screen is compared with the references published on Shakerland:
   Amspirit-lite screenshots (pixel comparison) and photographs of a real
-  machine. In November 2026, on the 472 sub-tests for CRTC type 0, 399 are
-  identical to the Amspirit-lite reference, 43 are close, 29 differ and 1 is
+  machine. In November 2026, on the 472 sub-tests for CRTC type 0, 410 are
+  identical to the Amspirit-lite reference, 33 are close, 28 differ and 1 is
   missing.
 - **Acid tests** by Kevin Thacker are self-checking programs for the PPI, PSG,
   FDC, Z80, CRTC and Gate Array, whose verdicts were validated on real machines.
@@ -483,6 +486,13 @@ development version of 2.3; they need the automation features of that version.
 
 The type 1 and type 2 CRTCs are not emulated: a CSL script that selects another
 type stops there.
+
+Sources: the CRTC, Gate Array and Z80 instruction timings of ByteBox follow the
+[Amstrad CPC CRTC Compendium](https://shaker.logonsystem.eu/ACCC1.11-EN.pdf) by Longshot (Logon
+System), and are checked with its [SHAKER tests](https://shaker.logonsystem.eu/tests),
+published on [Shakerland](https://shaker.logonsystem.eu). Many thanks to its
+authors for years of reverse-engineering, shared under a Creative Commons
+licence.
 
 # Part 2: Developer corner
 
