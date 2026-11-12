@@ -22,7 +22,7 @@ the binary releases, the user manual and a developer corner with examples.
   tests, see [Conformance](#conformance). *(Version 2.3.)*
 - Automation compatible with SHAKER: CSL scripts and SSM screenshot
   requests. A headless mode runs them without a window, for test benches and
-  continuous integration. *(Coming in version 2.3.)*
+  continuous integration. *(New in version 2.3.)*
 - FUZIX, a small UNIX, runs on the 6128 with a hard disk, a real-time clock and
   a 4 MB memory expansion. One click installs and starts it.
 - Expansions: X-MASS / Symbiface II IDE hard disk and DS12885 clock, RAM
@@ -32,7 +32,7 @@ the binary releases, the user manual and a developer corner with examples.
   watchpoints, read watchpoints and I/O breakpoints (2.3), instruction trace,
   single step by instruction or by video line, and a machine status window.
 - French (AZERTY) or English (QWERTY) machine: ROMs, virtual keyboard and PC
-  keyboard follow the chosen language. *(Coming in version 2.3.)*
+  keyboard follow the chosen language. *(New in version 2.3.)*
 - CRT shader (phosphor mask, scanlines), virtual keyboard, drag and drop of
   `.dsk`, `.cdt` and `.sna` files.
 - Snapshots (`.SNA`) readable by other emulators, which makes ByteBox a quick
@@ -125,9 +125,9 @@ bytebox --disk=Barbarian.dsk --autocmd='RUN"BARBA.I'
 bytebox --snapshot=demo.sna
 ```
 
-Options marked (2.3) are not in release 2.2.0. They come with version 2.3.
+Options marked (2.3) are new in version 2.3: release 2.2.0 doesn't have them.
 
-`--headless` runs about 20 times faster than real time and logs to standard
+`--headless` runs about 40 times faster than real time on a recent PC and logs to standard
 error. It plays no sound, but `--audio-dump` keeps it in a WAV file. It stops at the end of the script (exit status 1 on a script error), on
 an SSM `0000` pause, on a breakpoint or after `--frames`. One of `--script` or
 `--frames` is required.
@@ -210,8 +210,8 @@ the same identifier.
 
 ## Language and keyboard
 
-> Coming in version 2.3. Release 2.2.0 is French only, and its virtual keyboard
-> is a photograph of the French keyboard.
+> New in version 2.3. Release 2.2.0 was French only, and its virtual keyboard
+> a photograph of the French keyboard.
 
 The machine is French (AZERTY ROMs) or English (QWERTY ROMs). Choose it in
 `F6`, Hardware, Language. The choice is saved to `config.toml` and applies at
@@ -478,8 +478,8 @@ reported in the log and the built-in ROM is used.
 ## Conformance
 
 ByteBox models the timing of the CRTC type 0 and of the Gate Array. Two test
-suites are used as references. The runs and the figures below are those of the
-development version of 2.3; they need the automation features of that version.
+suites are used as references. The runs and the figures below are those of
+version 2.3; they need its automation features.
 
 - **[SHAKER](https://shaker.logonsystem.eu/tests)** by Longshot (Logon System)
   exercises the CRTC and the Gate Array.
@@ -510,8 +510,8 @@ examples are in `src` (Z80 and C sources) and `tools` (scripts). They were
 assembled or compiled and run in ByteBox.
 
 SSM requests, CSL scripts and the headless mode (`--ssm`, `--script`,
-`--headless`) are not in release 2.2.0: they come with version 2.3. The sections
-and the files that use them say so.
+`--headless`) are new in version 2.3: release 2.2.0 doesn't have them. The
+sections and the files that use them say so.
 
 | File | Purpose |
 |---|---|
@@ -613,7 +613,7 @@ Run it, open `F12`, and set `b 0x0038` in the quick bar to stop at each interrup
 
 ## SSM screenshots
 
-> Coming in version 2.3. Release 2.2.0 ignores SSM requests.
+> New in version 2.3. Release 2.2.0 ignores SSM requests.
 
 SSM (ScreenShot Management, [standard 1.2](https://shaker.logonsystem.eu/Shaker_CSL/SSM-STANDARD-EN.pdf) by
 Longshot) lets a program ask the emulator for a screenshot at an exact cycle. The request is a pair of `ED` opcodes that do nothing on a real
@@ -655,7 +655,7 @@ the requests are ignored, except that they release a `wait_ssm` of a script.
 
 ## CSL scripts
 
-> Coming in version 2.3. Release 2.2.0 has no `--script` option.
+> New in version 2.3. Release 2.2.0 has no `--script` option.
 
 CSL (CPC Scripting Language, [standard 1.5](https://shaker.logonsystem.eu/Shaker_CSL/CSL-STANDARD-EN.pdf) by
 Longshot) is a text format, one instruction per line, that plays the user:
@@ -744,7 +744,7 @@ screenshots with references; this is how SHAKER is run.
 
 ## Automating ByteBox
 
-> Coming in version 2.3.
+> New in version 2.3.
 
 Everything needed to run ByteBox from a script, a continuous integration job or
 an AI assistant that only has a terminal is already described above. Together:
@@ -770,7 +770,7 @@ The monitor is reachable too, through `--debug` (next section).
 
 ## Headless debugging session
 
-> Coming in version 2.3.
+> New in version 2.3.
 
 `--debug` runs the machine without a window and reads monitor commands from
 `-e` (repeatable), from `--commands <file>` (one per line) or from standard

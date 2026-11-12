@@ -80,7 +80,7 @@ offers the same settings: `fuzixrom on`, `ram 56`, `ide ~/.bytebox/FZX/disk.img`
 
 ## Keyboard
 
-This applies from version 2.3. With release 2.2.0 the keyboard of FUZIX is AZERTY.
+This applies from version 2.3. With release 2.2.0 the keyboard of FUZIX was AZERTY.
 
 At start, the ROM loader asks the OS ROM that is installed for the translation
 of each key, with and without `SHIFT`, and passes it to the kernel. The keys
